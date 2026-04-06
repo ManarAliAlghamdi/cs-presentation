@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خرافات علوم الحاسب — مكشوفة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080810;
+  --white: #f5f5f0;
+  --muted: #666;
+  --yellow: #F5E642;
+  --pink: #FF3CAC;
+  --cyan: #00F5FF;
+  --green: #00FF88;
+  --card: #0f0f1a;
+  --border: #1e1e30;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  height: 100vh; width: 100vw;
+  overflow: hidden;
+  cursor: none;
+  direction: rtl;
+}
+
+.cursor {
+  width: 12px; height: 12px;
+  background: var(--yellow);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease;
+  mix-blend-mode: difference;
+}
+
+/* SLIDE SYSTEM */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 64px;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.96);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: scale(1);
+}
+
+/* PROGRESS DOTS */
+.dots {
+  position: fixed;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.3s;
+}
+.dot.active { background: var(--yellow); width: 24px; border-radius: 3px; }
+.dot.done { background: var(--muted); }
+
+/* NAV */
+.nav {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 100;
+  direction: ltr;
+}
+.nav-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--white);
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 22px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.nav-btn.primary {
+  background: var(--yellow);
+  color: #000;
+  border-color: var(--yellow);
+}
+.nav-btn.primary:hover { transform: scale(1.05); }
+.nav-hint { font-size: 12px; color: var(--muted); font-family: 'Cairo', sans-serif; }
+
+/* ── SLIDE 0: INTRO ── */
+#s0 { gap: 0; }
+.s0-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--yellow);
+  margin-bottom: 20px;
+}
+.s0-title {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(52px, 9vw, 110px);
+  font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
+}
+.s0-title span { color: var(--yellow); display: block; }
+.s0-sub {
+  margin-top: 28px;
+  font-size: 18px;
+  color: var(--muted);
+  text-align: center;
+  max-width: 540px;
+  line-height: 1.8;
+}
+.s0-badge {
+  margin-top: 32px;
+  padding: 10px 28px;
+  background: rgba(245,230,66,0.08);
+  border: 1px solid rgba(245,230,66,0.25);
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--yellow);
+}
+
+/* ── SLIDE 1: GAME ── */
+#s1 { gap: 0; justify-content: flex-start; padding-top: 72px; }
+.game-top { text-align: center; margin-bottom: 20px; width: 100%; }
+.game-title {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(26px, 4vw, 48px);
+  font-weight: 900;
+  color: var(--white);
+}
+.game-title em { color: var(--yellow); font-style: normal; }
+
+.game-score-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 20px;
+  direction: ltr;
+}
+.gscore {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 20px;
+  text-align: center;
+}
+.gscore-n { font-family: 'Tajawal', sans-serif; font-size: 28px; font-weight: 900; line-height: 1; }
+.gscore-l { font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: 1px; }
+
+.game-pbar {
+  width: 100%; max-width: 620px; height: 4px;
+  background: var(--border); border-radius: 4px;
+  margin: 0 auto 20px; overflow: hidden;
+}
+.game-pfill {
+  height: 100%; background: var(--yellow);
+  border-radius: 4px; transition: width 0.5s ease;
+}
+
+.gcard {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 28px;
+  padding: 36px 40px;
+  width: 100%; max-width: 620px;
+  text-align: center;
+  transition: border-color 0.3s;
+}
+.gcard.correct-flash { border-color: var(--green); }
+.gcard.wrong-flash { border-color: var(--pink); }
+
+.gcard-emoji { font-size: 72px; display: block; margin-bottom: 16px; line-height: 1; }
+.gcard-job {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+.gcard-hint { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.7; }
+
+.gbtns { display: flex; gap: 14px; justify-content: center; direction: ltr; }
+.gbtn {
+  flex: 1; max-width: 220px;
+  padding: 14px 20px;
+  border-radius: 14px; border: 2px solid;
+  font-family: 'Cairo', sans-serif;
+  font-size: 15px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s;
+}
+.gbtn.yes { background: rgba(0,255,136,0.07); border-color: rgba(0,255,136,0.4); color: var(--green); }
+.gbtn.yes:hover:not(:disabled) { background: var(--green); color: #000; transform: translateY(-2px); }
+.gbtn.no { background: rgba(255,60,172,0.07); border-color: rgba(255,60,172,0.4); color: var(--pink); }
+.gbtn.no:hover:not(:disabled) { background: var(--pink); color: #fff; transform: translateY(-2px); }
+.gbtn:disabled { opacity: 0.4; cursor: default; transform: none !important; }
+
+.greveal {
+  display: none; margin-top: 20px;
+  padding: 18px 22px; border-radius: 16px;
+  text-align: center;
+}
+.greveal.show { display: block; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+.greveal.ok { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.25); }
+.greveal.nope { background: rgba(255,60,172,0.08); border: 1px solid rgba(255,60,172,0.25); }
+.greveal-reaction {
+  font-size: 18px; font-weight: 900; margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+.greveal.ok .greveal-reaction { color: var(--green); }
+.greveal.nope .greveal-reaction { color: var(--pink); }
+.greveal-head { font-weight: 800; font-size: 16px; margin-bottom: 6px; }
+.greveal-body { font-size: 13px; color: #aaa; line-height: 1.8; text-align: right; }
+.gnext {
+  margin-top: 14px;
+  background: var(--yellow); color: #000; border: none;
+  padding: 9px 24px; border-radius: 50px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 800; font-size: 14px;
+  cursor: pointer; transition: transform 0.2s;
+}
+.gnext:hover { transform: scale(1.05); }
+
+.game-over {
+  display: none; flex-direction: column;
+  align-items: center; gap: 12px; text-align: center;
+}
+.game-over.show { display: flex; }
+.go-num {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 100px; font-weight: 900;
+  line-height: 1; color: var(--yellow);
+}
+.go-title { font-family: 'Tajawal', sans-serif; font-size: 40px; font-weight: 900; }
+.go-sub { font-size: 15px; color: var(--muted); max-width: 440px; line-height: 1.8; }
+
+/* ── MYTH SLIDES ── */
+.myth-slide { gap: 0; }
+.myth-label {
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; color: var(--muted);
+  margin-bottom: 24px;
+}
+.myth-label span { color: var(--pink); }
+
+.myth-x-box {
+  display: flex; align-items: center; gap: 20px;
+  background: rgba(255,60,172,0.06);
+  border: 1px solid rgba(255,60,172,0.2);
+  border-radius: 20px; padding: 24px 32px;
+  margin-bottom: 24px; max-width: 820px; width: 100%;
+  flex-direction: row-reverse;
+}
+.myth-x-icon { font-size: 40px; flex-shrink: 0; }
+.myth-x-text {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 900;
+  color: #ff7eb3; line-height: 1.3;
+}
+
+.truth-box { max-width: 820px; width: 100%; }
+.truth-header {
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; color: var(--green);
+  margin-bottom: 14px;
+}
+.truth-cards { display: grid; gap: 12px; }
+.truth-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 18px 22px;
+  display: flex; align-items: flex-start; gap: 16px;
+  transition: border-color 0.3s, transform 0.3s;
+  flex-direction: row-reverse;
+}
+.truth-card:hover { border-color: var(--green); transform: translateX(-4px); }
+.truth-card-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+.truth-card-content { flex: 1; min-width: 0; text-align: right; }
+.truth-card-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+.truth-card-sub { font-size: 13px; color: var(--muted); line-height: 1.8; }
+.truth-card-sub strong { color: var(--white); }
+
+/* SHOCK OVERLAY */
+.shock-moment {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 48px;
+  z-index: 200; opacity: 0; pointer-events: none;
+  transition: opacity 0.4s;
+}
+.shock-moment.show { opacity: 1; pointer-events: all; }
+.shock-emoji { font-size: 80px; margin-bottom: 20px; animation: pulse 1s ease-in-out infinite alternate; }
+.shock-big {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(40px, 7vw, 88px);
+  font-weight: 900; line-height: 1.1; margin-bottom: 16px;
+}
+.shock-sub { font-size: clamp(15px, 2vw, 20px); color: var(--muted); max-width: 620px; line-height: 1.8; }
+.shock-dismiss {
+  margin-top: 32px; background: none;
+  border: 1px solid var(--border); color: var(--muted);
+  padding: 10px 28px; border-radius: 50px;
+  font-size: 13px; cursor: pointer;
+  font-family: 'Cairo', sans-serif; transition: all 0.2s;
+}
+.shock-dismiss:hover { border-color: var(--white); color: var(--white); }
+
+/* ── STATS SLIDE ── */
+#s-stats { gap: 28px; text-align: center; }
+.stats-headline {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(24px, 3.8vw, 46px);
+  font-weight: 900; line-height: 1.25;
+}
+.stats-headline em { color: var(--yellow); font-style: normal; }
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px; width: 100%; max-width: 1000px;
+}
+.stat-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 18px; padding: 22px 14px;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.stat-card:hover { transform: translateY(-4px); }
+.stat-num {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 900; line-height: 1; margin-bottom: 8px;
+}
+.stat-label { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.stat-source { font-size: 10px; color: #444; margin-top: 6px; }
+
+/* ── STAT CHIP on truth cards ── */
+.truth-stat {
+  display: inline-block; margin-top: 8px;
+  padding: 3px 12px; border-radius: 50px;
+  font-size: 11px; font-weight: 800;
+  background: rgba(245,230,66,0.1);
+  color: var(--yellow);
+  border: 1px solid rgba(245,230,66,0.25);
+}
+
+/* ── PERSONALITIES ── */
+#s-personalities { gap: 24px; }
+.p-headline {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(32px, 5.5vw, 68px);
+  font-weight: 900; text-align: center; line-height: 1.2;
+  margin-bottom: 4px;
+}
+.p-headline em { color: var(--cyan); font-style: normal; }
+.p-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 14px; width: 100%; max-width: 960px;
+}
+.p-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 18px; padding: 20px 16px;
+  text-align: center; transition: all 0.3s; cursor: default;
+}
+.p-card:hover { transform: translateY(-5px); }
+.p-card.c1:hover { border-color: var(--pink); }
+.p-card.c2:hover { border-color: var(--cyan); }
+.p-card.c3:hover { border-color: var(--yellow); }
+.p-card.c4:hover { border-color: var(--green); }
+.p-emoji { font-size: 40px; display: block; margin-bottom: 10px; }
+.p-type { font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 6px; }
+.p-job { font-size: 12px; color: var(--muted); line-height: 1.7; }
+.p-tag {
+  display: inline-block; margin-top: 8px;
+  padding: 2px 10px; border-radius: 50px;
+  font-size: 11px; font-weight: 700;
+}
+.p-card.c1 .p-tag { background: rgba(255,60,172,0.12); color: var(--pink); }
+.p-card.c2 .p-tag { background: rgba(0,245,255,0.1); color: var(--cyan); }
+.p-card.c3 .p-tag { background: rgba(245,230,66,0.1); color: var(--yellow); }
+.p-card.c4 .p-tag { background: rgba(0,255,136,0.1); color: var(--green); }
+
+/* ── FINALE ── */
+#s-finale {
+  text-align: center; gap: 20px;
+  background: radial-gradient(ellipse at center, rgba(245,230,66,0.05) 0%, transparent 65%);
+}
+.finale-big {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(44px, 8vw, 100px);
+  font-weight: 900; line-height: 1.1;
+}
+.finale-big em { color: var(--yellow); font-style: normal; display: block; }
+.finale-sub { font-size: 18px; color: var(--muted); max-width: 580px; line-height: 1.8; }
+.finale-pills {
+  display: flex; gap: 12px;
+  flex-wrap: wrap; justify-content: center; margin-top: 8px;
+}
+.finale-pill {
+  padding: 10px 22px; border-radius: 50px;
+  font-weight: 700; font-size: 14px;
+}
+.finale-pill.y { background: rgba(245,230,66,0.12); color: var(--yellow); border: 1px solid rgba(245,230,66,0.3); }
+.finale-pill.p { background: rgba(255,60,172,0.1); color: var(--pink); border: 1px solid rgba(255,60,172,0.25); }
+.finale-pill.c { background: rgba(0,245,255,0.1); color: var(--cyan); border: 1px solid rgba(0,245,255,0.25); }
+.finale-pill.g { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+
+/* ── REFERENCES ── */
+#s-refs { gap: 20px; align-items: flex-start; justify-content: flex-start; padding-top: 48px; }
+.refs-title {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 2px;
+  color: var(--muted); text-transform: uppercase; align-self: flex-start;
+}
+.refs-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; width: 100%; max-width: 860px;
+}
+.ref-item {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 18px;
+  display: flex; align-items: flex-start; gap: 12px;
+  direction: rtl;
+}
+.ref-num {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 18px; font-weight: 900;
+  color: var(--yellow); flex-shrink: 0; line-height: 1;
+  margin-top: 2px;
+}
+.ref-body { flex: 1; min-width: 0; }
+.ref-source { font-weight: 800; font-size: 13px; margin-bottom: 3px; }
+.ref-detail { font-size: 11px; color: var(--muted); line-height: 1.6; }
+
+/* ANIMATIONS */
+@keyframes popIn { from { transform: scale(0.8); opacity:0; } to { transform: scale(1); opacity:1; } }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.slide.active > * { animation: fadeUp 0.5s ease both; }
+.slide.active > *:nth-child(1) { animation-delay: 0.05s; }
+.slide.active > *:nth-child(2) { animation-delay: 0.15s; }
+.slide.active > *:nth-child(3) { animation-delay: 0.25s; }
+.slide.active > *:nth-child(4) { animation-delay: 0.35s; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="dots" id="dots"></div>
+
+<!-- SHOCK OVERLAYS -->
+<div class="shock-moment" id="shock-vfx">
+  <div class="shock-emoji">🎬</div>
+  <div class="shock-big" style="color:var(--cyan)">كل انفجار.</div>
+  <div class="shock-big">كل وحش في مارفل<br><span style="color:var(--yellow)">هو كود برمجي.</span></div>
+  <div class="shock-sub">فنانو المؤثرات البصرية يكتبون خوارزميات لمحاكاة النار والماء والفيزياء. بدون علوم الحاسب، لا يوجد آيرون مان، ولا ثانوس، ولا أفاتار.</div>
+  <button class="shock-dismiss" onclick="dismissShock('shock-vfx')">← صادم فعلاً!</button>
+</div>
+
+<div class="shock-moment" id="shock-nike">
+  <div class="shock-emoji">👟</div>
+  <div class="shock-big">نايك تختبر الحذاء</div>
+  <div class="shock-big"><span style="color:var(--yellow)">داخل الكمبيوتر</span><br>قبل صنعه.</div>
+  <div class="shock-sub">برامج المحاكاة تنمذج كيف ينحني النعل، وكيف يتوزع الضغط على قدمك، وكيف تتآكل المواد مع الوقت — قبل تصنيع أي حذاء حقيقي.</div>
+  <button class="shock-dismiss" onclick="dismissShock('shock-nike')">← لا يصدق!</button>
+</div>
+
+<!-- SLIDES -->
+
+<!-- SLIDE 0: INTRO -->
+<div class="slide active" id="s0">
+  <!-- <div class="s0-label">درس اليوم 🎯</div> -->
+  <div class="s0-title">
+    معتقدات شائعة
+    <span>عن علوم الحاسب</span>
+    <span style="color:var(--pink)">خاطئة تماماً.</span>
+  </div>
+  <div class="s0-sub">بنكسر ٤ خرافات شائعة عن علوم الحاسب، وحدة ورا الثانية .</div>
+  <div class="s0-badge">🎮 نبدأ بلعبة</div>
+</div>
+
+<!-- SLIDE 1: GAME -->
+<div class="slide" id="s1">
+  <div class="game-top">
+    <div class="game-title">خمني... هل هذي الوظيفة تحتاج <em>CS؟</em> 🤔</div>
+  </div>
+
+  <div class="game-score-row">
+    <div class="gscore">
+      <div class="gscore-n" id="gs-correct" style="color:var(--green)">0</div>
+      <div class="gscore-l">أصبت 🎯</div>
+    </div>
+    <div class="gscore">
+      <div class="gscore-n" id="gs-wrong" style="color:var(--pink)">0</div>
+      <div class="gscore-l">غلطت 💀</div>
+    </div>
+    <div class="gscore">
+      <div class="gscore-n" id="gs-q" style="color:var(--yellow)">1/8</div>
+      <div class="gscore-l">وين وصلنا</div>
+    </div>
+  </div>
+
+  <div class="game-pbar"><div class="game-pfill" id="gpfill" style="width:12.5%"></div></div>
+
+  <div id="gcard-wrap">
+    <div class="gcard" id="gcard">
+      <span class="gcard-emoji" id="gcard-emoji">🎭</span>
+      <div class="gcard-job" id="gcard-job">—</div>
+      <div class="gcard-hint" id="gcard-hint">—</div>
+      <div class="gbtns">
+        <button class="gbtn yes" onclick="gAnswer(true)">✅ تحتاج</button>
+        <button class="gbtn no" onclick="gAnswer(false)">❌ لا ما تحتاج</button>
+      </div>
+      <div class="greveal" id="greveal">
+        <div class="greveal-reaction" id="greveal-reaction"></div>
+        <div class="greveal-head" id="greveal-head">—</div>
+        <div class="greveal-body" id="greveal-body">—</div>
+        <button class="gnext" id="gnext" onclick="gNext()">التالي ←</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-over" id="game-over">
+    <div class="go-num" id="go-num">0/8</div>
+    <div class="go-title">كيف كانت؟ 😲</div>
+    <div class="go-sub">معظم الناس يتفاجؤون! CS أوسع بكثير مما تتوقع — يلا نكشف الحقيقة كاملة 👇</div>
+    <button class="gnext" style="margin-top:8px" onclick="goNext()">← يالله نكسر الخرافات!</button>
+  </div>
+</div>
+
+<!-- MYTH 1 -->
+<div class="slide myth-slide" id="s-myth1">
+  <div class="myth-label">الخرافة <span>#١</span></div>
+  <div class="myth-x-box">
+    <div class="myth-x-icon">❌</div>
+    <div class="myth-x-text">"علوم الحاسب = تعلّم البرمجة. وبس."</div>
+  </div>
+  <div class="truth-box">
+    <div class="truth-header">✦ الحقيقة</div>
+    <div class="truth-cards">
+      <div class="truth-card">
+        <div class="truth-card-icon">🎨</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">تصميم UX/UI — بدون كود تقريباً</div>
+          <div class="truth-card-sub">المصممون يبحثون في سلوك المستخدمين ويصممون التجربة البشرية للتطبيقات. <strong>معظم وظائف UX في الشركات الكبرى تطلب خلفية CS، لكن لا برمجة يومية.</strong></div>
+          <div class="truth-stat">💰 متوسط الراتب: $113K سنوياً</div>
+        </div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">🤝</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">مدير منتج (Product Manager) — صفر كود</div>
+          <div class="truth-card-sub">يقررون <strong>ماذا</strong> يُبنى <strong>ولماذا</strong>. يتحدثون مع المستخدمين، يضعون الاستراتيجية، يقودون المهندسين. مديرو المنتج في آبل يكسبون أكثر من ٢٠٠ ألف دولار سنوياً.</div>
+          <div class="truth-stat">💰 آبل وجوجل: $200K–$250K+</div>
+        </div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">🤖</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">مهندس Prompt للذكاء الاصطناعي — وظيفة جديدة كلياً</div>
+          <div class="truth-card-sub">كتابة التعليمات التي تتحكم في سلوك الذكاء الاصطناعي. <strong>وظيفة لم تكن موجودة قبل ٣ سنوات</strong>. راتبها يصل لـ ١٧٥ ألف دولار سنوياً.</div>
+          <div class="truth-stat">🚀 نشأت منذ 2021 — نمت 1000% في الطلب</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MYTH 2 -->
+<div class="slide myth-slide" id="s-myth2">
+  <div class="myth-label">الخرافة <span>#٢</span></div>
+  <div class="myth-x-box">
+    <div class="myth-x-icon">❌</div>
+    <div class="myth-x-text">"لازم تكون عبقري رياضيات عشان تدرس CS."</div>
+  </div>
+  <div class="truth-box">
+    <div class="truth-header">✦ الحقيقة</div>
+    <div class="truth-cards">
+      <div class="truth-card">
+        <div class="truth-card-icon">🧠</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">علوم الحاسب عن التفكير، مش الحساب</div>
+          <div class="truth-card-sub">تقسيم مشكلة كبيرة إلى خطوات صغيرة. اكتشاف الأنماط. تصميم الأنظمة. هذه <strong>مهارات تفكير</strong> — مش مهارات رياضيات.</div>
+          <div class="truth-stat">📊 58% من طلاب CS لا يدرسون تفاضل وتكامل أبداً</div>
+        </div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">🎨</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">نصف مسارات CS لا تحتاج رياضيات متقدمة أبداً</div>
+          <div class="truth-card-sub">تصميم UX، إدارة المنتج، الأمن السيبراني، كتابة المحتوى التقني، تصميم الألعاب — كلها مسارات CS يكون فيها <strong>الإبداع والتعاطف أهم أداة عندك</strong>.</div>
+          <div class="truth-stat">🎯 +20 تخصص في CS لا تشترط الرياضيات المتقدمة</div>
+        </div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">📊</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">حتى وظائف البيانات هي قصص أكثر من أرقام</div>
+          <div class="truth-card-sub">محللو البيانات يكتشفون قصصاً مخبأة داخل الأرقام. الجزء الصعب مش الحساب — <strong>بل معرفة السؤال الصح اللي تطرحه</strong>.</div>
+          <div class="truth-stat">📈 محلل البيانات: $100K+ — نمو الطلب 23% سنوياً</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MYTH 3 -->
+<div class="slide myth-slide" id="s-myth3">
+  <div class="myth-label">الخرافة <span>#٣</span></div>
+  <div class="myth-x-box">
+    <div class="myth-x-icon">❌</div>
+    <div class="myth-x-text">"ما في وظائف إبداعية في CS. كلها منطق وشاشات."</div>
+  </div>
+  <div class="truth-box">
+    <div class="truth-header">✦ الحقيقة — بعض أكثر الوظائف إبداعاً في العالم هي في CS</div>
+    <div class="truth-cards" style="grid-template-columns: 1fr 1fr;">
+      <div class="truth-card">
+        <div class="truth-card-icon">🎮</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">مصمم ألعاب</div>
+          <div class="truth-card-sub">اختراع عوالم كاملة، شخصيات، قصص وقواعد. CS + خيال لا حدود له.</div>
+          <div class="truth-stat">🎮 صناعة الألعاب: $182.7 مليار عالمياً — 2024</div>
+        </div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">🎬</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">فنان مؤثرات بصرية (VFX)</div>
+          <div class="truth-card-sub">كل مشهد في أفلام مارفل؟ مبني بـ CS. الفنانون اللي يصنعونه يحملون شهادة CS.</div>
+          <div class="truth-stat">🎬 Avengers: Endgame — 2,496 مشهد VFX</div>
+        </div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">🏛️</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">مهندس معماري حاسوبي</div>
+          <div class="truth-card-sub">استخدام CS لتصميم مبانٍ كان <strong>مستحيلاً</strong> قبل الكمبيوتر. أسلوب زها حديد بالكامل كان مدعوماً بـ CS.</div>
+          <div class="truth-stat">🏛️ 90% من المكاتب الهندسية تستخدم CS اليوم</div>
+        </div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">🎵</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">تقنية الموسيقى</div>
+          <div class="truth-card-sub">خوارزمية سبوتيفاي. Auto-Tune. برامج صناعة الموسيقى. كلها بناها أشخاص يجمعون CS مع شغفهم بالموسيقى.</div>
+          <div class="truth-stat">🎵 سبوتيفاي: 675M مستخدم نشط — Q4 2024</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MYTH 4 -->
+<div class="slide myth-slide" id="s-myth4">
+  <div class="myth-label">الخرافة <span>#٤</span></div>
+  <div class="myth-x-box">
+    <div class="myth-x-icon">❌</div>
+    <div class="myth-x-text">"CS ممل. تجلس لوحدك وتحدّق في الكود طول اليوم."</div>
+  </div>
+  <div class="truth-box">
+    <div class="truth-header">✦ الحقيقة — CS فيها أكثر الوظائف تنوعاً وإثارة</div>
+    <div class="truth-cards">
+      <div class="truth-card">
+        <div class="truth-card-icon">🔐</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">الهاكر الأخلاقي — الشركات تدفع لك عشان تخترقها</div>
+          <div class="truth-card-sub">المختبرون يخترقون البنوك والمستشفيات والحكومات بشكل قانوني للكشف عن الثغرات. <strong>هي حرفياً تجسس. وراتبها ١٦٠ ألف دولار+.</strong></div>
+          <div class="truth-stat">🔐 4.8 مليون وظيفة أمن سيبراني شاغرة عالمياً — ISC² 2024</div>
+        </div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">🚀</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">مهندس تقنية فضاء في ناسا / سبيس إكس</div>
+          <div class="truth-card-sub">كل صاروخ وقمر صناعي ومركبة فضائية يعمل بـ CS. الناس اللي يبنونها؟ خريجو CS حلموا بأكبر من ذلك.</div>
+          <div class="truth-stat">🚀 Falcon 9 يعمل بـ 3 أجهزة كمبيوتر متوازية — CS خالص</div>
+        </div>
+      </div>
+      <div class="truth-card">
+        <div class="truth-card-icon">🧬</div>
+        <div class="truth-card-content">
+          <div class="truth-card-title">المعلوماتية الحيوية — CS + الطب لإنقاذ الأرواح</div>
+          <div class="truth-card-sub">لقاح كوفيد تطور بشكل أسرع بسبب CS. العلماء استخدموا الخوارزميات <strong>لرسم خريطة الفيروس في أيام</strong> بدلاً من شهور.</div>
+          <div class="truth-stat">🧬 تسلسل جينوم كوفيد: 10 أيام بـ CS مقابل 10 سنوات بدونه</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="slide" id="s-stats">
+  <div class="myth-label" style="text-align:center;color:var(--cyan);">بالأرقام 📊</div>
+  <div class="stats-headline">CS ليست مجرد مجال —<br><em>هي أكبر صناعة في التاريخ.</em></div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--yellow)">$133K</div>
+      <div class="stat-label">متوسط راتب مهندس البرمجيات سنوياً في أمريكا (مايو 2024)</div>
+      <div class="stat-source">BLS Occupational Outlook Handbook, 2024</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--green)">15%</div>
+      <div class="stat-label">نمو وظائف CS المتوقع 2024–2034 — أسرع من أي مجال آخر</div>
+      <div class="stat-source">BLS Occupational Outlook Handbook, 2024</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--cyan)">4.8M</div>
+      <div class="stat-label">وظيفة أمن سيبراني شاغرة حول العالم في 2024</div>
+      <div class="stat-source">ISC² Cybersecurity Workforce Study, 2024</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--pink)">675M</div>
+      <div class="stat-label">مستخدم نشط شهرياً على سبوتيفاي — تديرهم خوارزميات CS</div>
+      <div class="stat-source">Spotify Q4 2024 Earnings Report</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--white)">$5.26T</div>
+      <div class="stat-label">حجم الإنفاق على التقنية عالمياً — أكبر من اقتصادات كاملة</div>
+      <div class="stat-source">Gartner Worldwide IT Spending Forecast, 2024</div>
+    </div>
+  </div>
+</div>
+
+<!-- PERSONALITIES -->
+<div class="slide" id="s-personalities">
+  <div class="myth-label" style="text-align:center;color:var(--yellow);">الصورة الحقيقية</div>
+  <div class="p-headline">في CS مسار<br><em>لكل شخصية.</em></div>
+  <div class="p-grid">
+    <div class="p-card c1">
+      <span class="p-emoji">🎨</span>
+      <div class="p-type">المبدع</div>
+      <div class="p-job">مصمم UX · مصمم ألعاب · فنان VFX · مصمم حركة</div>
+      <div class="p-tag">كود قليل أو معدوم</div>
+    </div>
+    <div class="p-card c2">
+      <span class="p-emoji">🕵️</span>
+      <div class="p-type">المحقق</div>
+      <div class="p-job">هاكر أخلاقي · محلل أمن سيبراني · محقق احتيال</div>
+      <div class="p-tag">بعض الكود</div>
+    </div>
+    <div class="p-card c3">
+      <span class="p-emoji">📣</span>
+      <div class="p-type">القائد</div>
+      <div class="p-job">مدير منتج · رائد أعمال تقني · مؤسس شركة ناشئة</div>
+      <div class="p-tag">لا كود مطلوب</div>
+    </div>
+    <div class="p-card c4">
+      <span class="p-emoji">🔬</span>
+      <div class="p-type">العالم</div>
+      <div class="p-job">باحث ذكاء اصطناعي · عالم بيانات · مهندس فضاء</div>
+      <div class="p-tag">يحب الكود</div>
+    </div>
+  </div>
+</div>
+
+<!-- FINALE -->
+<div class="slide" id="s-finale">
+  <div class="myth-label" style="color:var(--muted);font-size:11px;">الخلاصة</div>
+  <div class="finale-big">
+    CS مش وظيفة.
+    <em>هي قوة خارقة</em>
+    لأي مسيرة مهنية.
+  </div>
+  <div class="finale-sub">مش لازم تصير مبرمجاً. بس لازم تفهم كيف تستخدم التقنية لتعمل اللي <em>تحبه</em> — أحسن من أي شخص ثاني.</div>
+  <div class="finale-pills">
+    <div class="finale-pill y">🎨 مبدع؟ ← UX / تصميم ألعاب</div>
+    <div class="finale-pill p">🕵️ فضولي؟ ← أمن سيبراني</div>
+    <div class="finale-pill c">📣 قائد؟ ← إدارة منتج</div>
+    <div class="finale-pill g">🔬 عالم؟ ← ذكاء اصطناعي / بيانات</div>
+  </div>
+</div>
+
+<!-- REFERENCES -->
+<div class="slide" id="s-refs">
+  <div class="refs-title">✦ المصادر والمراجع</div>
+  <div class="refs-grid">
+    <div class="ref-item">
+      <div class="ref-num">01</div>
+      <div class="ref-body">
+        <div class="ref-source">U.S. Bureau of Labor Statistics — Occupational Outlook Handbook, 2024</div>
+        <div class="ref-detail">متوسط راتب مطوري البرمجيات: $133,080 (مايو 2024) — نمو الوظائف المتوقع 15% بين 2024 و2034، أسرع من معدل المهن الأخرى. bls.gov/ooh/computer-and-information-technology/software-developers.htm</div>
+      </div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">02</div>
+      <div class="ref-body">
+        <div class="ref-source">Gartner — Worldwide IT Spending Forecast, July 2024</div>
+        <div class="ref-detail">الإنفاق العالمي على تقنية المعلومات بلغ $5.26 تريليون في 2024 بنمو 7.5% عن العام السابق، مدفوعاً بالذكاء الاصطناعي والبنية التحتية. gartner.com/en/newsroom</div>
+      </div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">03</div>
+      <div class="ref-body">
+        <div class="ref-source">ISC² — Cybersecurity Workforce Study, 2024</div>
+        <div class="ref-detail">الفجوة العالمية في قوى العمل للأمن السيبراني بلغت 4,763,963 وظيفة شاغرة — بزيادة 19.1% عن 2023. القوى العاملة الحالية: 5.5 مليون محترف. isc2.org/research</div>
+      </div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">04</div>
+      <div class="ref-body">
+        <div class="ref-source">Spotify — Q4 2024 Earnings Report, فبراير 2025</div>
+        <div class="ref-detail">675 مليون مستخدم نشط شهرياً في نهاية 2024 — بنمو 12% سنوياً. أول ربح سنوي في تاريخ الشركة: €1.138 مليار. newsroom.spotify.com</div>
+      </div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">05</div>
+      <div class="ref-body">
+        <div class="ref-source">Newzoo — Global Games Market Report, 2024</div>
+        <div class="ref-detail">سوق الألعاب العالمي أنتج $182.7 مليار في 2024 — 3.42 مليار لاعب حول العالم. يُتوقع وصوله $213.3 مليار بحلول 2027. newzoo.com</div>
+      </div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">06</div>
+      <div class="ref-body">
+        <div class="ref-source">BLS — Computer and Information Technology Occupations, 2024</div>
+        <div class="ref-detail">129,200 وظيفة جديدة في تطوير البرمجيات سنوياً على مدار العقد القادم. متوسط راتب جميع مهن تقنية المعلومات: $104,420. bls.gov/ooh/computer-and-information-technology</div>
+      </div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">07</div>
+      <div class="ref-body">
+        <div class="ref-source">ISC² — Insights: State of the Cybersecurity Workforce, أكتوبر 2024</div>
+        <div class="ref-detail">90% من المنظمات تعاني من نقص في مهارات الأمن السيبراني — 64% يعتبرون الفجوة المهارية تهديداً أكبر من نقص الموظفين. isc2.org/insights</div>
+      </div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">08</div>
+      <div class="ref-body">
+        <div class="ref-source">Newzoo — Global Games Market: Player Forecast, 2024</div>
+        <div class="ref-detail">عدد اللاعبين عالمياً وصل 3.42 مليار في 2024، بنمو 4.5% سنوياً — الموبايل يمثل 48% من إيرادات السوق بـ $92.6 مليار. newzoo.com</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn primary" id="next-btn" onclick="nextSlide()"> ←التالي</button>
+    <button class="nav-btn" onclick="prevSlide()">السابق→ </button>
+
+</div>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX - 6 + 'px';
+  cursor.style.top = e.clientY - 6 + 'px';
+});
+document.addEventListener('mousedown', () => cursor.style.transform = 'scale(2)');
+document.addEventListener('mouseup', () => cursor.style.transform = 'scale(1)');
+
+// Slides
+const slideIds = ['s0','s1','s-myth1','s-myth2','s-myth3','s-myth4','s-stats','s-personalities','s-finale','s-refs'];
+const TOTAL = slideIds.length;
+let current = 0, gameInit = false;
+
+const dotsEl = document.getElementById('dots');
+slideIds.forEach((_,i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.id = 'dot-'+i;
+  dotsEl.appendChild(d);
+});
+
+function showSlide(n) {
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById(slideIds[n]).classList.add('active');
+  slideIds.forEach((_,i) => {
+    const d = document.getElementById('dot-'+i);
+    d.className = 'dot' + (i===n?' active':(i<n?' done':''));
+  });
+  document.getElementById('next-btn').textContent = n === TOTAL-1 ? 'انتهى ✓' : 'التالي ←';
+  current = n;
+  if (slideIds[n] === 's1' && !gameInit) { gameInit = true; gInit(); }
+}
+
+function nextSlide() { if (current < TOTAL-1) showSlide(current+1); }
+function prevSlide() { if (current > 0) showSlide(current-1); }
+function goNext() { nextSlide(); }
+
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key==='ArrowUp') prevSlide();
+  if (e.key==='ArrowLeft'||e.key==='ArrowDown') nextSlide();
+});
+
+function showShock(id) { document.getElementById(id).classList.add('show'); }
+function dismissShock(id) { document.getElementById(id).classList.remove('show'); }
+
+// ── GAME ──
+const jobs = [
+  { emoji:'🎬', job:'فنان مؤثرات بصرية (VFX)', hint:'أنا من يصنع الانفجارات والمخلوقات اللي تشوفها في أفلام مارفل',
+    cs:true,
+    head:'🎬 أيوه! فن VFX = CS بالكامل',
+    body:'فنانو VFX يكتبون كود لمحاكاة النار والماء والفيزياء. بدون CS؟ لا آيرون مان، لا ثانوس، لا أفاتار — ما في شيء أصلاً 😮',
+    reactOk:'🎉صح!',
+    reactNope:'😱 ظننت الانفجارات رُسمت يدوياً؟ كلها كود CS!' },
+
+  { emoji:'🎵', job:'منتج موسيقى', hint:'أنا من يصنع البيتات وراء أغانيك المفضلة',
+    cs:true,
+    head:'',
+    body:'Auto-Tune؟ خوارزمية CS. Ableton؟ بناه مهندسو CS. وخوارزمية سبوتيفاي اللي تقرر ماذا يسمع ٦٠٠ مليون شخص؟ تعلّم آلي بحت 🤯',
+    reactOk:'🎵 شاطر! حتى البيتات اللي تحبها فيها CS!',
+    reactNope:'صدمة صح؟' },
+
+  { emoji:'🏟️', job:'محلل رياضي', hint:'أساعد فرق NFL و NBA على الفوز أكثر',
+    cs:true,
+    head:'',
+    body:'ليكرز وريال مدريد عندهم أقسام CS كاملة تحلل كل حركة للاعب، تتوقع الإصابات، وتحسّن تكتيكات المباريات. البيانات هي الملعب الجديد! 📊',
+    reactOk:'🏟️ صح! البيانات تصنع الأبطال — مو بس التدريب!',
+    reactNope:'🤔 فاجأتك؟ الفرق الكبيرة تعتمد على CS أكثر مما تتخيلين!' },
+ 
+    
+  //{ emoji:'🏥', job:'جراح روبوتي', hint:'أجري العمليات على المرضى باستخدام روبوت أتحكم فيه',
+    //cs:true,
+   // head:'🏥 أيوه! الجراحة الروبوتية = CS بدقة متناهية',
+    //body:'روبوت da Vinci ما يتحرك إلا بأوامر CS دقيقة. إلغاء الاهتزاز، خرائط ثلاثية الأبعاد — هذا مو طب فقط، هذا CS يحمي أرواح 🤖',
+    //reactOk:'🏥 بالضبط! كل عملية روبوتية مبنية على CS!',
+    //reactNope:'😮 الطبيب يتحكم بروبوت — والروبوت CS من أوله لآخره!' },
+
+  // { emoji:'🍔', job:'مدير سلسلة توريد ماكدونالدز', hint:'أتأكد أن كل مكون يصل طازجاً لكل مطعم حول العالم',
+  //   cs:true,
+  //   head:'🍔 أيوه! ماكدونالدز تشتغل على CS',
+  //   body:'٧٠ مليون وجبة يومياً في ١٠٠ دولة. كل شريحة لحم وكل لفافة صوص تتابعها في الوقت الفعلي — هذا من أعقد أنظمة CS في العالم 🌍',
+  //   reactOk:'🍔 عبقري! ٧٠ مليون وجبة ما توصل بالصدفة!',
+  //   reactNope:'😲 كيف كل برجر يوصل طازج لـ ١٠٠ دولة؟ نظام CS ينظّمه كله!' },
+
+ { emoji:'🎨', job:'رسام بالألوان الزيتية', hint:'أرسم لوحات تقليدية بالفرشاة والقماش',
+    cs:false,
+    head:'🎨 لا! الرسم التقليدي فن إنساني خالص',
+    body:'الرسم الزيتي حرفة عمرها قرون — ما تحتاج كود 🖌️. بس لو رسمت بـ Procreate أو Photoshop؟ تلك البرامج CS بالكامل!',
+    reactOk:'🎨 صح!',
+    reactNope:'😄 الرسام الكلاسيكي حر تماماً من CS — ليس كل شيء يحتاجه!' },
+
+
+  { emoji:'👟', job:'مصمم أحذية نايك', hint:'أنا من يصمم الـ Air Jordan القادم — الشكل والمواد والراحة',
+    cs:true,
+    head:'👟 أيوه! نايك تصمم بـ CS قبل ما تلمس القماش',
+    body:'قبل أي حذاء يُصنع، يجرّبونه كومبيوترياً بالكامل — كيف ينحني النعل، كيف يتوزع الضغط. CS يوفر ملايين الدولارات من النماذج 💰',
+    reactOk:'👟 ما فاتتك! كل Air Jordan بُني رقمياً أولاً!',
+    reactNope:'😲 ما توقعت؟ نايك تحاكي كل حذاء كومبيوترياً قبل ما تصنعه!' },
+
+  { emoji:'☕', job:'باريستا', hint:'أصنع قهوتك الصباحية في المقهى',
+    cs:false,
+    head:'☕ لا! الباريستا فنان — ما يحتاج CS',
+    body:'الباريستا فن وإحساس وتجربة — لا خوارزميات هنا 🎨. بس ماكينات الإسبريسو الذكية اللي تعدّل الطحن تلقائياً؟ بناها مهندسو CS!',
+    reactOk:'☕ صح! القهوة الحقيقية تُصنع بالحس — مو بالكود!',
+    reactNope:'😄 لا لا! الباريستا فنان حر — CS مو في كل مكان 😄' },
+];
+
+let gIdx=0, gCorrect=0, gWrong=0, gAnswered=false;
+
+function gInit() { gIdx=0; gCorrect=0; gWrong=0; gLoad(); }
+
+function gLoad() {
+  if (gIdx >= jobs.length) { gEnd(); return; }
+  gAnswered = false;
+  const j = jobs[gIdx];
+  document.getElementById('gcard-emoji').textContent = j.emoji;
+  document.getElementById('gcard-job').textContent = j.job;
+  document.getElementById('gcard-hint').textContent = '"' + j.hint + '"';
+  document.getElementById('greveal').className = 'greveal';
+  document.querySelectorAll('.gbtn').forEach(b => { b.disabled=false; b.style.opacity='1'; });
+  document.getElementById('gs-q').textContent = (gIdx+1)+'/'+jobs.length;
+  document.getElementById('gpfill').style.width = ((gIdx+1)/jobs.length*100)+'%';
+  document.getElementById('gnext').textContent = gIdx===jobs.length-1 ? 'شوف نتيجتي 🏆' : 'يالله التالي! ←';
+}
+
+function gAnswer(userYes) {
+  if (gAnswered) return;
+  gAnswered = true;
+  const j = jobs[gIdx];
+  const ok = (userYes === j.cs);
+  if (ok) gCorrect++; else gWrong++;
+  document.getElementById('gs-correct').textContent = gCorrect;
+  document.getElementById('gs-wrong').textContent = gWrong;
+  const rev = document.getElementById('greveal');
+  rev.className = 'greveal show ' + (ok ? 'ok':'nope');
+  document.getElementById('greveal-reaction').textContent = ok ? j.reactOk : j.reactNope;
+  document.getElementById('greveal-head').textContent = j.head;
+  document.getElementById('greveal-body').textContent = j.body;
+  document.querySelectorAll('.gbtn').forEach(b => { b.disabled=true; b.style.opacity='0.4'; });
+  const card = document.getElementById('gcard');
+  card.classList.add(ok ? 'correct-flash' : 'wrong-flash');
+  setTimeout(() => card.classList.remove('correct-flash','wrong-flash'), 800);
+  if (j.job.includes('VFX') && !userYes) setTimeout(() => showShock('shock-vfx'), 600);
+  if (j.job.includes('نايك') && !userYes) setTimeout(() => showShock('shock-nike'), 600);
+}
+
+function gNext() { gIdx++; gLoad(); }
+
+function gEnd() {
+  document.getElementById('gcard-wrap').style.display='none';
+  document.getElementById('game-over').classList.add('show');
+  document.getElementById('go-num').textContent = gCorrect+'/'+jobs.length;
+  document.querySelector('.game-score-row').style.display='none';
+  document.querySelector('.game-pbar').style.display='none';
+}
+</script>
+</body>
+</html>
