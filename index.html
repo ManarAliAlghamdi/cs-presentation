@@ -583,7 +583,7 @@ body {
   </div>
   <div class="about-text">
     <div class="about-name">منار<br><em>الغامدي</em></div>
-    <div class="about-title">مطوّرة تطبيقات وذكاء اصطناعي · طالبة علوم حاسب</div>
+    <div class="about-title">مطوّرة تطبيقات وذكاء اصطناعي · طالبة هندسة حاسب</div>
     <div class="about-bio">
       طالبة علوم حاسب شغوفة بالتطوير والذكاء الاصطناعي.<br>
       <strong>آبل اختارتني السنة الماضية ضمن أفضل المطورين الطلاب في العالم</strong> — وكنت في Apple Park في WWDC25. 🌍
@@ -1029,6 +1029,18 @@ body {
   </div>
 </div>
 
+<!-- CONNECT -->
+<div class="slide" id="s-connect">
+  <div class="myth-label" style="text-align:center;color:var(--muted);">تواصلي معي</div>
+  <div style="font-family:'Tajawal',sans-serif;font-size:clamp(32px,5vw,58px);font-weight:900;text-align:center;line-height:1.2;margin-bottom:8px;">
+    عندك سؤال؟<br><em style="color:var(--yellow)">تواصلي معي على LinkedIn!</em>
+  </div>
+  <img src="linkedInQR.png" alt="LinkedIn QR Code"
+    style="width:220px;height:220px;border-radius:20px;border:3px solid var(--yellow);box-shadow:0 0 40px rgba(245,230,66,0.25);">
+  <div style="font-size:14px;color:var(--muted);margin-top:4px;">📲 وجّهي كاميرتك على الكود</div>
+  <div style="font-size:13px;color:#444;margin-top:2px;">Manar Alghamdi · Swift Student Challenge Winner · WWDC25</div>
+</div>
+
 <!-- NAV -->
 <div class="nav">
   <button class="nav-btn primary" id="next-btn" onclick="nextSlide()"> ←التالي</button>
@@ -1047,7 +1059,7 @@ document.addEventListener('mousedown', () => cursor.style.transform = 'scale(2)'
 document.addEventListener('mouseup', () => cursor.style.transform = 'scale(1)');
 
 // Slides
-const slideIds = ['s0','s-about','s1','s-myth1','s-myth2','s-myth3','s-stats','s-finale','s-refs'];
+const slideIds = ['s0','s-about','s1','s-myth1','s-myth2','s-myth3','s-stats','s-finale','s-refs','s-connect'];
 const TOTAL = slideIds.length;
 let current = 0, gameInit = false;
 
