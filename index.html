@@ -262,6 +262,58 @@ body {
 .go-title { font-family: 'Tajawal', sans-serif; font-size: 40px; font-weight: 900; }
 .go-sub { font-size: 15px; color: var(--muted); max-width: 440px; line-height: 1.8; }
 
+/* ── ABOUT SLIDE ── */
+#s-about {
+  flex-direction: row-reverse;
+  gap: 56px; justify-content: center; align-items: center;
+}
+.about-photo-wrap {
+  flex-shrink: 0; position: relative;
+}
+.about-photo {
+  width: 260px; height: 320px;
+  object-fit: cover; object-position: center top;
+  border-radius: 28px;
+  border: 3px solid var(--yellow);
+  box-shadow: 0 0 60px rgba(245,230,66,0.2);
+}
+.about-badge {
+  position: absolute; bottom: -14px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--yellow); color: #000;
+  font-weight: 900; font-size: 12px;
+  padding: 6px 16px; border-radius: 50px;
+  white-space: nowrap;
+}
+.about-text { max-width: 420px; text-align: right; }
+.about-name {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 900; line-height: 1.1;
+  margin-bottom: 8px;
+}
+.about-name em { color: var(--yellow); font-style: normal; }
+.about-title {
+  font-size: 15px; color: var(--cyan);
+  font-weight: 700; margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+.about-bio {
+  font-size: 16px; color: var(--muted);
+  line-height: 1.9;
+}
+.about-bio strong { color: var(--white); }
+.about-apple {
+  margin-top: 22px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px; padding: 12px 18px;
+}
+.about-apple-icon { font-size: 28px; }
+.about-apple-text { font-size: 13px; line-height: 1.6; text-align: right; }
+.about-apple-text strong { color: var(--white); display: block; font-size: 14px; }
+
 /* ── MYTH SLIDES ── */
 .myth-slide { gap: 0; }
 .myth-label {
@@ -521,6 +573,29 @@ body {
   </div>
   <div class="s0-sub">بنكسر ٣ خرافات شائعة عن CS  وحدة ورا الثانية. خصوصاً البنات تسمع هالخرافات كثير! 💡</div>
   <div class="s0-badge">🎮 نبدأ بلعبة</div>
+</div>
+
+<!-- SLIDE: ABOUT -->
+<div class="slide" id="s-about">
+  <div class="about-photo-wrap">
+    <img class="about-photo" src="manar.jpeg" alt="منار الغامدي في Apple Park - WWDC25">
+    <div class="about-badge">🍎 WWDC25 — Apple Park</div>
+  </div>
+  <div class="about-text">
+    <div class="about-name">منار<br><em>الغامدي</em></div>
+    <div class="about-title">مطوّرة تطبيقات وذكاء اصطناعي · طالبة علوم حاسب</div>
+    <div class="about-bio">
+      طالبة علوم حاسب شغوفة بالتطوير والذكاء الاصطناعي.<br>
+      <strong>آبل اختارتني هالسنة ضمن أفضل المطورين الطلاب في العالم</strong> — وكنت في Apple Park في WWDC25. 🌍
+    </div>
+    <div class="about-apple">
+      <div class="about-apple-icon">🏆</div>
+      <div class="about-apple-text">
+        <strong>Swift Student Challenge Winner</strong>
+        Apple WWDC25 · 2025
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- SLIDE 1: GAME -->
@@ -972,7 +1047,7 @@ document.addEventListener('mousedown', () => cursor.style.transform = 'scale(2)'
 document.addEventListener('mouseup', () => cursor.style.transform = 'scale(1)');
 
 // Slides
-const slideIds = ['s0','s1','s-myth1','s-myth2','s-myth3','s-stats','s-finale','s-refs'];
+const slideIds = ['s0','s-about','s1','s-myth1','s-myth2','s-myth3','s-stats','s-finale','s-refs'];
 const TOTAL = slideIds.length;
 let current = 0, gameInit = false;
 
