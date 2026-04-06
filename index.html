@@ -206,7 +206,7 @@ body {
   font-weight: 900;
   margin-bottom: 6px;
 }
-.gcard-hint { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.7; }
+.gcard-hint { display: none; }
 
 .gbtns { display: flex; gap: 14px; justify-content: center; direction: ltr; }
 .gbtn {
@@ -1010,7 +1010,7 @@ function dismissShock(id) { document.getElementById(id).classList.remove('show')
 
 // ── GAME ──
 const jobs = [
-  { emoji:'🎬', job:'فنانة مؤثرات بصرية (VFX)', hint:'أنا من تصنع الانفجارات والمخلوقات اللي تشوفينها في أفلام مارفل',
+  { emoji:'🎬', job:'فنانة مؤثرات بصرية (VFX)', hint:'أنا ',
     cs:true,
     head:'🎬 أيوه! فن VFX = CS بالكامل',
     body:'فنانات VFX يكتبن كود لمحاكاة النار والماء والفيزياء. بدون CS؟ لا آيرون مان، لا ثانوس، لا أفاتار  ما في شيء أصلاً 😮',
